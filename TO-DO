@@ -1,0 +1,22 @@
++Movement
++Collision
++Camera(TO-DO finish implementing camera at y extremes)
++Room gen
+
++-Dungeon gen
+
+-Village gen
+-UI
+
+-Projectiles
+-Pets
+-Monsters
+-Combat
+-Inventory
+-Consumables
+-Spells(teleportation, fire)
+-Sleeping(tiredness, day/night cycle)
+-Lighting, visibility ranges
+-Weather
+-Message windows 
+-NPCs
