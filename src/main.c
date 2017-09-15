@@ -3,20 +3,18 @@
 void main(){
   init();
 
-  Entity * user = newEntity(2,2,PLAYER);
+  Entity * user = newEntity(50,50,PLAYER);
   Map * test = newMap(100,100,GRASS);
   Camera * view = newCamera(20,60,user);
 
-  generateDungeon(test,1,1,20);
+  generateDungeon(test,49,49,400);
   inscribeEntity(user,test);
-
-
 
   int input;
   do{
     handleInput(input, user, test);
     drawMap(test, view);
-  }while((input = getch()) != 'q');
+  }while((input = getch()) != '/');
 
   endwin();
 }
@@ -25,5 +23,5 @@ void init(){
   raw();
   noecho();
   curs_set(0);
-  srand(time(NULL));
+  srand((unsigned)time(NULL));
 }

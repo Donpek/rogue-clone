@@ -16,16 +16,16 @@ void handleInput(int in, Entity * e, Map * m){
   switch(in){
     case 'W':
     case 'w':
-      if(coll(m, e->y - 1, e->x) == 'N') e->y--; break;
+      if(collEmpty(m, e->y - 1, e->x) == 1) e->y--; break;
     case 'A':
     case 'a':
-      if(coll(m, e->y, e->x - 1) == 'N') e->x--; break;
+      if(collEmpty(m, e->y, e->x - 1) == 1) e->x--; break;
     case 'S':
     case 's':
-      if(coll(m, e->y + 1, e->x) == 'N') e->y++; break;
+      if(collEmpty(m, e->y + 1, e->x) == 1) e->y++; break;
     case 'D':
     case 'd':
-      if(coll(m, e->y, e->x + 1) == 'N') e->x++; break;
+      if(collEmpty(m, e->y, e->x + 1) == 1) e->x++; break;
   }//switch
   e->below = m->data[e->y][e->x];
   m->data[e->y][e->x] = e->gfx;

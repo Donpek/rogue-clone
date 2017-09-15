@@ -1,40 +1,110 @@
 #include "rogue.h"
 
-void generateDungeon(Map * m, int y, int x, int numRooms){
-  Room * rooms = malloc(sizeof(Room *) * numRooms);
+void generateDungeon(Map * m, int y, int x, int size){
+  Room ** rooms = malloc(sizeof(Room *) * size);
   Room * r;
-  int i, pY, pX, pH, pW, minWall/*, offset*/;
+  int i, pY, pX, pH, pW, minWall, dir/*, offset*/;
+  int stop=0;
+  Room * start;
 
-  rooms = newRoom(y, x, rand() % 2);
-  inscribeRoom(rooms, m);
+  *rooms = newRoom(y, x, rand() % 2);
+  start = *rooms;
+  inscribeRoom(*rooms, m);
 
-  for(i=1; i<numRooms; i++){
+  for(i=1; i<size; i++){
+    if(stop == 12 && start == *rooms){
+      mvprintw(21, 0, "Too many rooms, dude.");
+      return;
+    }
+    if(stop == 12) {
+      stop = 0;
+      rooms--;
+    }
     r = newRoom(0, 0, rand() % NUM_OF_ROOM_TYPES);
-    pY = rooms->y; pX = rooms->x;
-    pH = rooms->h; pW = rooms->w;
-    switch(/*rand() % 4*/0){
+    pY = (*rooms)->y; pX = (*rooms)->x;
+    pH = (*rooms)->h; pW = (*rooms)->w;
+    dir = rand() % 4;
+    switch(dir){
       case 0: //EAST
         if(
-          coll(m, pY, pX+pW) == 'N' &&
-          coll(m, pY+pH, pX+pW) == 'N' &&
-          coll(m, pY, pX+pW+r->w) == 'N' &&
-          coll(m, pY+pH, pX+pW+r->w) == 'N'
+          collRoom(m, pY, pX+pW) == 0 &&
+          collRoom(m, pY+r->h-1, pX+pW) == 0 &&
+          collRoom(m, pY, pX+pW+r->w-1) == 0 &&
+          collRoom(m, pY+r->h-1, pX+pW+r->w-1) == 0 &&
+          collRoom(m, pY+r->h/2-1, pX+pW+r->w/2-1) == 0
         ){
-          //offset = rand() % pH - 2;
-          r->y = pY /*+ offset*/; r->x = pX + pW - 1;
-          minWall = (r->h < rooms->h) ? r->h : rooms->h;
-          rooms++; rooms = r;
+          stop=0;
+          r->y = pY; r->x = pX + pW - 1;
+          minWall = (r->h < (*rooms)->h) ? r->h : (*rooms)->h;
+          rooms++; *rooms = r;
           inscribeRoom(r, m);
           m->data[r->y+rand()%(minWall-2)+1][r->x] = VERTICAL_DOOR;}
         else{
           i--;
+          free(r);
+          stop++;
         }
         break;
-      case 1: break; //NORTH
-
-      case 2: break; //WEST
-
-      case 3: break; //SOUTH
+      case 1: //NORTH
+        if(
+          collRoom(m, pY-r->h, pX) == 0 &&
+          collRoom(m, pY-r->h, pX+r->w-1) == 0 &&
+          collRoom(m, pY-1, pX) == 0 &&
+          collRoom(m, pY-1, pX+r->w-1) == 0 &&
+          collRoom(m, pY-r->h/2, pX+r->w/2-1) == 0
+        ){
+          stop=0;
+          r->y = pY-r->h+1; r->x = pX;
+          minWall = (r->w < (*rooms)->w) ? r->w : (*rooms)->w;
+          rooms++; *rooms = r;
+          inscribeRoom(r, m);
+          m->data[r->y+r->h-1][r->x+rand()%(minWall-2)+1] = HORIZONTAL_DOOR;}
+        else{
+          i--;
+          free(r);
+          stop++;
+        }
+        break;
+      case 2: //WEST
+        if(
+          collRoom(m, pY, pX-r->w) == 0 &&
+          collRoom(m, pY, pX-1) == 0 &&
+          collRoom(m, pY+r->h-1, pX-r->w) == 0 &&
+          collRoom(m, pY+r->h-1, pX-1) == 0 &&
+          collRoom(m, pY+r->h/2-1, pX-r->w/2) == 0
+        ){
+          stop=0;
+          r->y = pY; r->x = pX-r->w+1;
+          minWall = (r->h < (*rooms)->h) ? r->h : (*rooms)->h;
+          rooms++; *rooms = r;
+          inscribeRoom(r, m);
+          m->data[r->y+rand()%(minWall-2)+1][r->x+r->w-1] = VERTICAL_DOOR;}
+        else{
+          i--;
+          free(r);
+          stop++;
+        }
+        break;
+      case 3: //SOUTH
+        if(
+          collRoom(m, pY+pH, pX) == 0 &&
+          collRoom(m, pY+pH+r->h-1, pX) == 0 &&
+          collRoom(m, pY+pH, pX+r->w-1) == 0 &&
+          collRoom(m, pY+pH+r->h-1, pX+r->w-1) == 0 &&
+          collRoom(m, pY+r->h/2-1, pX+r->w/2-1) == 0
+        ){
+          stop=0;
+          r->y = pY+pH-1; r->x = pX;
+          minWall = (r->w < (*rooms)->w) ? r->w : (*rooms)->w;
+          rooms++; *rooms = r;
+          inscribeRoom(r, m);
+          m->data[r->y][r->x+rand()%(minWall-2)+1] = HORIZONTAL_DOOR;}
+        else{
+          i--;
+          free(r);
+          stop++;
+        }
+        break;
     }//switch
   }//for
 }
@@ -123,16 +193,38 @@ void drawMap(Map * m, Camera * c){
     }
   }
 }
-char coll(Map * m, int y, int x){
-    if(x < 0 || y < 0 || x >= m->w || y >= m->h){
-      return 'X'; // OUT OF BOUNDS
-    }
-    switch(m->data[y][x]){
-      case FLOOR:
-      case GRASS:
-      case VERTICAL_DOOR:
-      case HORIZONTAL_DOOR:
-        return 'N'; // NO COLLISION
-    }
-    return 'Y'; // COLLISION
+int collRoom(Map * m, int y, int x){
+  if(x < 0 || y < 0 || x >= m->w || y >= m->h){
+    return -1; // OUT OF BOUNDS
+  }
+  char t = m->data[y][x];
+  if(t == FLOOR ||
+     t == VERTICAL_DOOR ||
+     t == HORIZONTAL_DOOR ||
+     t == UPPER_LEFT_CORNER ||
+     t == UPPER_RIGHT_CORNER ||
+     t == LOWER_LEFT_CORNER ||
+     t == LOWER_RIGHT_CORNER ||
+     t == WESTERN_WALL ||
+     t == EASTERN_WALL ||
+     t == NORTHERN_WALL ||
+     t == SOUTHERN_WALL
+  ){
+    return 1;
+  }
+  else return 0;
+}
+int collEmpty(Map * m, int y, int x){
+  if(x < 0 || y < 0 || x >= m->w || y >= m->h){
+    return -1; // OUT OF BOUNDS
+  }
+  char t = m->data[y][x];
+  if(t == FLOOR ||
+     t == GRASS ||
+     t == VERTICAL_DOOR ||
+     t == HORIZONTAL_DOOR
+  ){
+    return 1;
+  }
+  else return 0;
 }

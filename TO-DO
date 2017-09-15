@@ -1,9 +1,11 @@
 +Movement
 +Collision
 +Camera(TO-DO finish implementing camera at y extremes)
-+Room gen
++Room gen (rectangles)
++Dungeon gen (snake algorithm)
 
-+-Dungeon gen
+-Clean dishes
+-Take laptop, laundry and get to the bus station before 4:30
 
 -Village gen
 -UI
@@ -18,5 +20,5 @@
 -Sleeping(tiredness, day/night cycle)
 -Lighting, visibility ranges
 -Weather
--Message windows 
+-Message windows
 -NPCs
