@@ -30,7 +30,7 @@ void handleInput(int in, Entity * e, Map * m){
   e->below = m->data[e->y][e->x];
   m->data[e->y][e->x] = e->gfx;
 }
-Entity * newEntity(int y, int x, char graphic){
+Entity * newEntity(int y, int x, char * graphic){
   Entity * e = malloc(sizeof(Entity));
   e->y = y;
   e->x = x;

@@ -4,7 +4,7 @@ IDIR = ./include/
 
 all: rogue run clean
 
-rogue:
+rogue: $(IDIR)*.h
 	gcc -o $@ $(SRCS) $(FLAGS)
 
 run:

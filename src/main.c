@@ -4,7 +4,7 @@ void main(){
   init();
 
   Entity * user = newEntity(50,50,PLAYER);
-  Map * test = newMap(100,100,GRASS);
+  Map * test = newMap(100,100," ");
   Camera * view = newCamera(20,60,user);
 
   generateDungeon(test,49,49,400);

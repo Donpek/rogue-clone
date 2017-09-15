@@ -1,15 +1,14 @@
 +Movement
 +Collision
-+Camera(TO-DO finish implementing camera at y extremes)
++Camera
 +Room gen (rectangles)
 +Dungeon gen (snake algorithm)
 
--Clean dishes
--Take laptop, laundry and get to the bus station before 4:30
+-NPCs
+-UI (1 y below current Camera)(NAME(camW-6 max length)\n)
+-Tiles (make them into structs (name, graphic, color))
 
 -Village gen
--UI
-
 -Projectiles
 -Pets
 -Monsters
@@ -21,4 +20,3 @@
 -Lighting, visibility ranges
 -Weather
 -Message windows
--NPCs

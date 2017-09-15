@@ -152,15 +152,15 @@ Room * newRoom(int y, int x, int type){
   }
   return r;
 }
-Map * newMap(int height, int width, char fill){
+Map * newMap(int height, int width, char * fill){
   Map * m = malloc(sizeof(Map));
   m->fill = fill;
   m->h = height;
   m->w = width;
-  m->data = malloc(sizeof(char *) * height);
+  m->data = malloc(sizeof(char **) * height);
   int y,x;
   for(y=0; y<height; y++){
-    m->data[y] = malloc(sizeof(char) * width);
+    m->data[y] = malloc(sizeof(char *) * width);
     for(x=0; x<width; x++){
       m->data[y][x] = fill;
     }
@@ -185,7 +185,7 @@ void drawMap(Map * m, Camera * c){
 
   for(y=0; y<c->h; y++){
     for(x=0; x<c->w; x++){
-      mvaddch(
+      mvprintw(
         y,
         x,
         m->data[cameraY+offsetY+y][cameraX+offsetX+x]
@@ -197,18 +197,18 @@ int collRoom(Map * m, int y, int x){
   if(x < 0 || y < 0 || x >= m->w || y >= m->h){
     return -1; // OUT OF BOUNDS
   }
-  char t = m->data[y][x];
-  if(t == FLOOR ||
-     t == VERTICAL_DOOR ||
-     t == HORIZONTAL_DOOR ||
-     t == UPPER_LEFT_CORNER ||
-     t == UPPER_RIGHT_CORNER ||
-     t == LOWER_LEFT_CORNER ||
-     t == LOWER_RIGHT_CORNER ||
-     t == WESTERN_WALL ||
-     t == EASTERN_WALL ||
-     t == NORTHERN_WALL ||
-     t == SOUTHERN_WALL
+  char * t = m->data[y][x];
+  if(strcmp(t, FLOOR) == 0 ||
+     strcmp(t, VERTICAL_DOOR) == 0 ||
+     strcmp(t, HORIZONTAL_DOOR) == 0 ||
+     strcmp(t, UPPER_LEFT_CORNER) == 0 ||
+     strcmp(t, UPPER_RIGHT_CORNER) == 0 ||
+     strcmp(t, LOWER_LEFT_CORNER) == 0 ||
+     strcmp(t, LOWER_RIGHT_CORNER) == 0 ||
+     strcmp(t, WESTERN_WALL) == 0 ||
+     strcmp(t, EASTERN_WALL) == 0 ||
+     strcmp(t, NORTHERN_WALL) == 0 ||
+     strcmp(t, SOUTHERN_WALL) == 0
   ){
     return 1;
   }
@@ -218,11 +218,11 @@ int collEmpty(Map * m, int y, int x){
   if(x < 0 || y < 0 || x >= m->w || y >= m->h){
     return -1; // OUT OF BOUNDS
   }
-  char t = m->data[y][x];
-  if(t == FLOOR ||
-     t == GRASS ||
-     t == VERTICAL_DOOR ||
-     t == HORIZONTAL_DOOR
+  char * t = m->data[y][x];
+  if(strcmp(t, FLOOR) == 0 ||
+     strcmp(t, VERTICAL_DOOR) == 0 ||
+     strcmp(t, HORIZONTAL_DOOR) == 0 ||
+     strcmp(t, GRASS) == 0
   ){
     return 1;
   }
