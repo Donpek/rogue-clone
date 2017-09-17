@@ -1,4 +1,4 @@
-FLAGS = -lncurses -I$(IDIR)
+FLAGS = -lncurses -I$(IDIR) -w
 SRCS = ./src/*.c
 IDIR = ./include/
 

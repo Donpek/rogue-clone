@@ -2,18 +2,18 @@
 
 void main(){
   init();
-  Tile* tiles = initTiles();
-  Entity * user = newEntity(50,50,tiles[PLAYER_ID]);
-  Map * test = newMap(100,100,tiles[GRASS_ID]);
-  Camera * view = newCamera(20,60,user);
+  tiles = initTiles();
+  user = newEntity(50,50,PLAYER_ID);
+  currMap = newMap(100,100,tiles[GRASS_ID]);
+  view = newCamera(20,60,user);
 
-  generateDungeon(test,49,49,400,tiles);
-  inscribeEntity(user,test);
+  generateDungeon(49,49,400);
+  inscribeEntity(user);
 
   int input;
   do{
-    handleInput(input, user, test);
-    drawMap(test, view);
+    handleInput(input, user);
+    drawMap();
   }while((input = getch()) != '/');
 
   endwin();
@@ -26,4 +26,7 @@ void init(){
   noecho();
   curs_set(0);
   srand((unsigned)time(NULL));
+}
+int range(int from, int to){
+  return rand() % (to-from+1) + from;
 }

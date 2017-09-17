@@ -6,6 +6,8 @@
 #define CORNER_ID 4
 #define WALL_ID 5
 #define FLOOR_ID 6
+#define SLIME_ID 7
+#define GRASS2_ID 8
 /* COLOR IDS */
 #define WHITE 0
 #define RED 1
@@ -13,3 +15,7 @@
 #define BLUE 3
 #define YELLOW 4
 #define MAGENTA 5
+/* ROOM TYPE IDS */
+#define SMALL_RECTANGLE 0
+#define LARGE_RECTANGLE 1
+#define SLIME_ROOM 2

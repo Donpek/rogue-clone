@@ -11,12 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct{
-  int y,x,h,w;
-  int type;
-} Room;
-
-typedef void (*Ability)(struct Entity* user, struct Entity** targets);
+typedef void (*Ability)(struct Entity* user, struct Entity* target);
 
 typedef struct{
   char * gfx;
@@ -26,11 +21,18 @@ typedef struct{
 typedef struct{
   int y,x;
   Tile t, below;
-  int hp, maxhp, speed,
-    stamina, weight,
-    maxweight, visionRange;
+  int hp, maxhp,
+    stamina, maxStamina,
+    weight, maxweight,
+    visionRange;
   Ability ** abilities;
 } Entity;
+
+typedef struct{
+  int y,x,h,w;
+  int type, entCount;
+  Entity** ents;
+} Room;
 
 typedef struct{
   Tile ** data;
@@ -46,18 +48,34 @@ typedef struct{
 } Camera;
 
 void init();
-Map * newMap(int h, int w, Tile fill);
-Entity * newEntity(int y, int x, Tile tile);
-void drawMap(Map * m, Camera * c);
-Camera * newCamera(int height, int width, Entity * target);
-void handleInput(int in, Entity * e, Map * m);
-int collRoom(Map * m, int y, int x);
-int collEmpty(Map * m, int y, int x);
-void inscribeEntity(Entity * e, Map * m);
-Room * newRoom(int y, int x, int type);
-void inscribeRoom(Room * r, Map * m, Tile* ts);
-void generateDungeon(Map * m, int y, int x, int size, Tile* ts);
 Tile* initTiles();
 void initColors();
+int range(int from, int to);
+/*maps.c*/
+Map * newMap(int h, int w, Tile fill);
+void drawMap();
+void inscribeRoom(Room * r);
+void inscribeRect(Room * r, int cornerID, int wallID, int floorID);
+int collRoom(int y, int x);
+int collEmpty(int y, int x);
+Room * newRoom(int y, int x, int type);
+void generateDungeon(int y, int x, int size);
+int dungeonRoomProb();
+int collEnt(Entity** ents, int ent_count, int y, int x);
+/*entities.c*/
+Camera * newCamera(int height, int width, Entity * target);
+void handleInput(int in, Entity * e);
+void inscribeEntity(Entity * e);
+Entity * newEntity(int y, int x, int type);
+void eraseEntity(Entity* e);
+/*abilities.c*/
+void punch(Entity* puncher, Entity* target);
+void bodySlam(Entity* puncher, Entity* target);
+//
+
+Tile* tiles;
+Entity* user;
+Map* currMap;
+Camera* view;
 
 #endif

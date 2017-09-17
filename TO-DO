@@ -4,17 +4,17 @@
 +Room gen (rectangles)
 +Dungeon gen (snake algorithm)
 +Tiles (category, graphic, color)
++Monsters
 
--NPCs
 -UI (1 y below current Camera)(NAME(camW-6 max length)\n)
 -Lighting, visibility ranges
 -Abilities
+-Event log
+-Combat
 
 -Village gen
 -Projectiles
 -Pets
--Monsters
--Combat
 -Inventory
 -Consumables
 -Spells(teleportation, fire)

@@ -47,5 +47,15 @@ Tile* initTiles(){
   tiles[FLOOR_ID].visible = FLOOR_VISIBLE;
   tiles[FLOOR_ID].category = FLOOR_CATEGORY;
 
+  tiles[SLIME_ID].gfx = SLIME_GFX;
+  tiles[SLIME_ID].color = SLIME_COLOR;
+  tiles[SLIME_ID].visible = SLIME_VISIBLE;
+  tiles[SLIME_ID].category = SLIME_CATEGORY;
+
+  tiles[GRASS2_ID].gfx = GRASS2_GFX;
+  tiles[GRASS2_ID].color = GRASS2_COLOR;
+  tiles[GRASS2_ID].visible = GRASS2_VISIBLE;
+  tiles[GRASS2_ID].category = GRASS2_CATEGORY;
+
   return tiles;
 }
