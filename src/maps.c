@@ -1,6 +1,6 @@
 #include "rogue.h"
 
-void generateDungeon(Map * m, int y, int x, int size){
+void generateDungeon(Map * m, int y, int x, int size, Tile* ts){
   Room ** rooms = malloc(sizeof(Room *) * size);
   Room * r;
   int i, pY, pX, pH, pW, minWall, dir/*, offset*/;
@@ -9,7 +9,7 @@ void generateDungeon(Map * m, int y, int x, int size){
 
   *rooms = newRoom(y, x, rand() % 2);
   start = *rooms;
-  inscribeRoom(*rooms, m);
+  inscribeRoom(*rooms, m, ts);
 
   for(i=1; i<size; i++){
     if(stop == 12 && start == *rooms){
@@ -37,8 +37,8 @@ void generateDungeon(Map * m, int y, int x, int size){
           r->y = pY; r->x = pX + pW - 1;
           minWall = (r->h < (*rooms)->h) ? r->h : (*rooms)->h;
           rooms++; *rooms = r;
-          inscribeRoom(r, m);
-          m->data[r->y+rand()%(minWall-2)+1][r->x] = VERTICAL_DOOR;}
+          inscribeRoom(r, m, ts);
+          m->data[r->y+rand()%(minWall-2)+1][r->x] = ts[VERTICAL_DOOR_ID];}
         else{
           i--;
           free(r);
@@ -57,8 +57,8 @@ void generateDungeon(Map * m, int y, int x, int size){
           r->y = pY-r->h+1; r->x = pX;
           minWall = (r->w < (*rooms)->w) ? r->w : (*rooms)->w;
           rooms++; *rooms = r;
-          inscribeRoom(r, m);
-          m->data[r->y+r->h-1][r->x+rand()%(minWall-2)+1] = HORIZONTAL_DOOR;}
+          inscribeRoom(r, m, ts);
+          m->data[r->y+r->h-1][r->x+rand()%(minWall-2)+1] = ts[HORIZONTAL_DOOR_ID];}
         else{
           i--;
           free(r);
@@ -77,8 +77,8 @@ void generateDungeon(Map * m, int y, int x, int size){
           r->y = pY; r->x = pX-r->w+1;
           minWall = (r->h < (*rooms)->h) ? r->h : (*rooms)->h;
           rooms++; *rooms = r;
-          inscribeRoom(r, m);
-          m->data[r->y+rand()%(minWall-2)+1][r->x+r->w-1] = VERTICAL_DOOR;}
+          inscribeRoom(r, m, ts);
+          m->data[r->y+rand()%(minWall-2)+1][r->x+r->w-1] = ts[VERTICAL_DOOR_ID];}
         else{
           i--;
           free(r);
@@ -97,8 +97,8 @@ void generateDungeon(Map * m, int y, int x, int size){
           r->y = pY+pH-1; r->x = pX;
           minWall = (r->w < (*rooms)->w) ? r->w : (*rooms)->w;
           rooms++; *rooms = r;
-          inscribeRoom(r, m);
-          m->data[r->y][r->x+rand()%(minWall-2)+1] = HORIZONTAL_DOOR;}
+          inscribeRoom(r, m, ts);
+          m->data[r->y][r->x+rand()%(minWall-2)+1] = ts[HORIZONTAL_DOOR_ID];}
         else{
           i--;
           free(r);
@@ -108,28 +108,28 @@ void generateDungeon(Map * m, int y, int x, int size){
     }//switch
   }//for
 }
-void inscribeRoom(Room * r, Map * m){
+void inscribeRoom(Room * r, Map * m, Tile* ts){
   int y,x,h,w;
   switch(r->type){
     case 0:
     case 1: // Rectangles
       h = r->y + r->h - 1;
       w = r->x + r->w - 1;
-      m->data[r->y][r->x] = UPPER_LEFT_CORNER;
-      m->data[r->y][w] = UPPER_RIGHT_CORNER;
-      m->data[h][r->x] = LOWER_LEFT_CORNER;
-      m->data[h][w] = LOWER_RIGHT_CORNER;
+      m->data[r->y][r->x] = ts[CORNER_ID];
+      m->data[r->y][w] = ts[CORNER_ID];
+      m->data[h][r->x] = ts[CORNER_ID];
+      m->data[h][w] = ts[CORNER_ID];
       for(y=1; y<r->h-1; y++){
-        m->data[r->y+y][r->x] = WESTERN_WALL;
-        m->data[r->y+y][w] = EASTERN_WALL;
+        m->data[r->y+y][r->x] = ts[WALL_ID];
+        m->data[r->y+y][w] = ts[WALL_ID];
       }
       for(x=1; x<r->w-1; x++){
-        m->data[r->y][r->x+x] = NORTHERN_WALL;
-        m->data[h][r->x+x] = SOUTHERN_WALL;
+        m->data[r->y][r->x+x] = ts[WALL_ID];
+        m->data[h][r->x+x] = ts[WALL_ID];
       }
       for(y=1; y<r->h-1; y++){
         for(x=1; x<r->w-1; x++){
-          m->data[r->y+y][r->x+x] = FLOOR;
+          m->data[r->y+y][r->x+x] = ts[FLOOR_ID];
         }
       }
       break;
@@ -152,15 +152,15 @@ Room * newRoom(int y, int x, int type){
   }
   return r;
 }
-Map * newMap(int height, int width, char * fill){
+Map * newMap(int height, int width, Tile fill){
   Map * m = malloc(sizeof(Map));
   m->fill = fill;
   m->h = height;
   m->w = width;
-  m->data = malloc(sizeof(char **) * height);
+  m->data = malloc(sizeof(Tile *) * height);
   int y,x;
   for(y=0; y<height; y++){
-    m->data[y] = malloc(sizeof(char *) * width);
+    m->data[y] = malloc(sizeof(Tile) * width);
     for(x=0; x<width; x++){
       m->data[y][x] = fill;
     }
@@ -185,11 +185,20 @@ void drawMap(Map * m, Camera * c){
 
   for(y=0; y<c->h; y++){
     for(x=0; x<c->w; x++){
-      mvprintw(
-        y,
-        x,
-        m->data[cameraY+offsetY+y][cameraX+offsetX+x]
-      );
+      if(m->data[cameraY+offsetY+y][cameraX+offsetX+x].visible == 1){
+        attron(COLOR_PAIR(
+          m->data[cameraY+offsetY+y][cameraX+offsetX+x].color)
+        );
+        mvprintw(
+          y,
+          x,
+          m->data[cameraY+offsetY+y][cameraX+offsetX+x].gfx
+        );
+        attroff(COLOR_PAIR(
+          m->data[cameraY+offsetY+y][cameraX+offsetX+x].color)
+        );}
+      else
+        mvprintw(y,x," ");
     }
   }
 }
@@ -197,18 +206,12 @@ int collRoom(Map * m, int y, int x){
   if(x < 0 || y < 0 || x >= m->w || y >= m->h){
     return -1; // OUT OF BOUNDS
   }
-  char * t = m->data[y][x];
-  if(strcmp(t, FLOOR) == 0 ||
-     strcmp(t, VERTICAL_DOOR) == 0 ||
-     strcmp(t, HORIZONTAL_DOOR) == 0 ||
-     strcmp(t, UPPER_LEFT_CORNER) == 0 ||
-     strcmp(t, UPPER_RIGHT_CORNER) == 0 ||
-     strcmp(t, LOWER_LEFT_CORNER) == 0 ||
-     strcmp(t, LOWER_RIGHT_CORNER) == 0 ||
-     strcmp(t, WESTERN_WALL) == 0 ||
-     strcmp(t, EASTERN_WALL) == 0 ||
-     strcmp(t, NORTHERN_WALL) == 0 ||
-     strcmp(t, SOUTHERN_WALL) == 0
+  char * t = m->data[y][x].gfx;
+  if(strcmp(t, FLOOR_GFX) == 0 ||
+     strcmp(t, VERTICAL_DOOR_GFX) == 0 ||
+     strcmp(t, HORIZONTAL_DOOR_GFX) == 0 ||
+     strcmp(t, CORNER_GFX) == 0 ||
+     strcmp(t, WALL_GFX) == 0
   ){
     return 1;
   }
@@ -218,11 +221,11 @@ int collEmpty(Map * m, int y, int x){
   if(x < 0 || y < 0 || x >= m->w || y >= m->h){
     return -1; // OUT OF BOUNDS
   }
-  char * t = m->data[y][x];
-  if(strcmp(t, FLOOR) == 0 ||
-     strcmp(t, VERTICAL_DOOR) == 0 ||
-     strcmp(t, HORIZONTAL_DOOR) == 0 ||
-     strcmp(t, GRASS) == 0
+  char * t = m->data[y][x].gfx;
+  if(strcmp(t, FLOOR_GFX) == 0 ||
+     strcmp(t, VERTICAL_DOOR_GFX) == 0 ||
+     strcmp(t, HORIZONTAL_DOOR_GFX) == 0 ||
+     strcmp(t, GRASS_GFX) == 0
   ){
     return 1;
   }

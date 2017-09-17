@@ -2,7 +2,7 @@
 
 void inscribeEntity(Entity * e, Map * m){
   e->below = m->data[e->y][e->x];
-  m->data[e->y][e->x] = e->gfx;
+  m->data[e->y][e->x] = e->t;
 }
 Camera * newCamera(int height, int width, Entity * target){
   Camera * c = malloc(sizeof(Camera));
@@ -28,12 +28,12 @@ void handleInput(int in, Entity * e, Map * m){
       if(collEmpty(m, e->y, e->x + 1) == 1) e->x++; break;
   }//switch
   e->below = m->data[e->y][e->x];
-  m->data[e->y][e->x] = e->gfx;
+  m->data[e->y][e->x] = e->t;
 }
-Entity * newEntity(int y, int x, char * graphic){
+Entity * newEntity(int y, int x, Tile tile){
   Entity * e = malloc(sizeof(Entity));
   e->y = y;
   e->x = x;
-  e->gfx = graphic;
+  e->t = tile;
   return e;
 }

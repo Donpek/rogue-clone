@@ -3,10 +3,12 @@
 +Camera
 +Room gen (rectangles)
 +Dungeon gen (snake algorithm)
++Tiles (category, graphic, color)
 
 -NPCs
 -UI (1 y below current Camera)(NAME(camW-6 max length)\n)
--Tiles (make them into structs (name, graphic, color))
+-Lighting, visibility ranges
+-Abilities
 
 -Village gen
 -Projectiles
@@ -17,6 +19,5 @@
 -Consumables
 -Spells(teleportation, fire)
 -Sleeping(tiredness, day/night cycle)
--Lighting, visibility ranges
 -Weather
 -Message windows

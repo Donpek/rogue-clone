@@ -2,22 +2,10 @@
 #define ROGUE_H
 #define MAX_STRUCTS_IN_A_SINGLE_MAP 10
 #define NUM_OF_ROOM_TYPES 2
-/*TILES*/
-#define PLAYER "P"
-#define GRASS ","
-/*ROOM TILES*/
-#define VERTICAL_DOOR "|"
-#define HORIZONTAL_DOOR "-"
-#define UPPER_LEFT_CORNER "#"
-#define UPPER_RIGHT_CORNER "#"
-#define LOWER_LEFT_CORNER "#"
-#define LOWER_RIGHT_CORNER "#"
-#define WESTERN_WALL "#"
-#define EASTERN_WALL "#"
-#define NORTHERN_WALL "#"
-#define SOUTHERN_WALL "#"
-#define FLOOR "_"
-/**/
+
+#include "ids.h"
+#include "categories.h"
+#include "tile_constants.h"
 #include <ncurses.h>
 #include <time.h>
 #include <stdlib.h>
@@ -28,16 +16,26 @@ typedef struct{
   int type;
 } Room;
 
+typedef void (*Ability)(struct Entity* user, struct Entity** targets);
+
+typedef struct{
+  char * gfx;
+  int color, visible, category;
+} Tile;
+
 typedef struct{
   int y,x;
-  char * gfx;
-  char * below;
+  Tile t, below;
+  int hp, maxhp, speed,
+    stamina, weight,
+    maxweight, visionRange;
+  Ability ** abilities;
 } Entity;
 
 typedef struct{
-  char *** data;
+  Tile ** data;
   int h,w;
-  char * fill;
+  Tile fill;
   Room *** structs;
   Entity ** ents;
 } Map;
@@ -48,8 +46,8 @@ typedef struct{
 } Camera;
 
 void init();
-Map * newMap(int h, int w, char * fill);
-Entity * newEntity(int y, int x, char * graphic);
+Map * newMap(int h, int w, Tile fill);
+Entity * newEntity(int y, int x, Tile tile);
 void drawMap(Map * m, Camera * c);
 Camera * newCamera(int height, int width, Entity * target);
 void handleInput(int in, Entity * e, Map * m);
@@ -57,7 +55,9 @@ int collRoom(Map * m, int y, int x);
 int collEmpty(Map * m, int y, int x);
 void inscribeEntity(Entity * e, Map * m);
 Room * newRoom(int y, int x, int type);
-void inscribeRoom(Room * r, Map * m);
-void generateDungeon(Map * m, int y, int x, int size);
+void inscribeRoom(Room * r, Map * m, Tile* ts);
+void generateDungeon(Map * m, int y, int x, int size, Tile* ts);
+Tile* initTiles();
+void initColors();
 
 #endif

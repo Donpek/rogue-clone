@@ -2,12 +2,12 @@
 
 void main(){
   init();
-
-  Entity * user = newEntity(50,50,PLAYER);
-  Map * test = newMap(100,100," ");
+  Tile* tiles = initTiles();
+  Entity * user = newEntity(50,50,tiles[PLAYER_ID]);
+  Map * test = newMap(100,100,tiles[GRASS_ID]);
   Camera * view = newCamera(20,60,user);
 
-  generateDungeon(test,49,49,400);
+  generateDungeon(test,49,49,400,tiles);
   inscribeEntity(user,test);
 
   int input;
@@ -20,6 +20,8 @@ void main(){
 }
 void init(){
   initscr();
+  start_color();
+  initColors();
   raw();
   noecho();
   curs_set(0);
