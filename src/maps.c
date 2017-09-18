@@ -10,29 +10,31 @@ int dungeonRoomProb(){
     return LARGE_RECTANGLE;
 }
 
-void generateDungeon(int y, int x, int size){
-  Room ** rooms = malloc(sizeof(Room *) * size);
+Room** generateDungeon(int y, int x, int maxSize){
+  Room ** rooms = malloc(sizeof(Room *) * maxSize);
   Room * r;
   int i, pY, pX, pH, pW, minWall, dir;
-  int stop=0;
+  int stop=0, currIndex=0, size=0;
   Room * start;
 
-  *rooms = newRoom(y, x, dungeonRoomProb());
-  start = *rooms;
-  inscribeRoom(*rooms);
+  rooms[size] = newRoom(y, x, dungeonRoomProb());
+  start = rooms[size];
+  currMap->roomCount++;
+  inscribeRoom(rooms[size]);
+  size++;
 
-  for(i=1; i<size; i++){
-    if(stop == 12 && start == *rooms){
+  for(i=1; i<maxSize; i++){
+    if(stop == 12 && start == rooms[currIndex]){
       mvprintw(21, 0, "Too many rooms, dude.");
-      return;
+      return rooms;
     }
     if(stop == 12) {
       stop = 0;
-      rooms--;
+      currIndex--;
     }
     r = newRoom(0, 0, dungeonRoomProb());
-    pY = (*rooms)->y; pX = (*rooms)->x;
-    pH = (*rooms)->h; pW = (*rooms)->w;
+    pY = rooms[currIndex]->y; pX = rooms[currIndex]->x;
+    pH = rooms[currIndex]->h; pW = rooms[currIndex]->w;
     dir = rand() % 4;
     switch(dir){
       case 0: //EAST
@@ -45,8 +47,10 @@ void generateDungeon(int y, int x, int size){
         ){
           stop=0;
           r->y = pY; r->x = pX + pW - 1;
-          minWall = (r->h < (*rooms)->h) ? r->h : (*rooms)->h;
-          rooms++; *rooms = r;
+          minWall = (r->h < rooms[currIndex]->h) ?
+            r->h : rooms[currIndex]->h;
+          currIndex++; rooms[size] = r;
+          currMap->roomCount++; size++;
           inscribeRoom(r);
           currMap->data[r->y+rand()%(minWall-2)+1][r->x] = tiles[VERTICAL_DOOR_ID];}
         else{
@@ -65,8 +69,10 @@ void generateDungeon(int y, int x, int size){
         ){
           stop=0;
           r->y = pY-r->h+1; r->x = pX;
-          minWall = (r->w < (*rooms)->w) ? r->w : (*rooms)->w;
-          rooms++; *rooms = r;
+          minWall = (r->w < rooms[currIndex]->w) ?
+            r->w : rooms[currIndex]->w;
+          currIndex++; rooms[size] = r;
+          currMap->roomCount++; size++;
           inscribeRoom(r);
           currMap->data[r->y+r->h-1][r->x+rand()%(minWall-2)+1] = tiles[HORIZONTAL_DOOR_ID];}
         else{
@@ -85,8 +91,10 @@ void generateDungeon(int y, int x, int size){
         ){
           stop=0;
           r->y = pY; r->x = pX-r->w+1;
-          minWall = (r->h < (*rooms)->h) ? r->h : (*rooms)->h;
-          rooms++; *rooms = r;
+          minWall = (r->h < rooms[currIndex]->h) ?
+            r->h : rooms[currIndex]->h;
+          currIndex++; rooms[size] = r;
+          currMap->roomCount++; size++;
           inscribeRoom(r);
           currMap->data[r->y+rand()%(minWall-2)+1][r->x+r->w-1] = tiles[VERTICAL_DOOR_ID];}
         else{
@@ -105,8 +113,10 @@ void generateDungeon(int y, int x, int size){
         ){
           stop=0;
           r->y = pY+pH-1; r->x = pX;
-          minWall = (r->w < (*rooms)->w) ? r->w : (*rooms)->w;
-          rooms++; *rooms = r;
+          minWall = (r->w < rooms[currIndex]->w) ?
+            r->w : rooms[currIndex]->w;
+          currIndex++; rooms[size] = r;
+          currMap->roomCount++; size++;
           inscribeRoom(r);
           currMap->data[r->y][r->x+rand()%(minWall-2)+1] = tiles[HORIZONTAL_DOOR_ID];}
         else{
@@ -117,6 +127,7 @@ void generateDungeon(int y, int x, int size){
         break;
     }//switch
   }//for
+  return rooms;
 }
 void inscribeRect(Room * r, int cornerID, int wallID, int floorID){
   int y,x,h,w;
@@ -152,7 +163,7 @@ void inscribeRoom(Room * r){
      for(y=0; y<r->entCount; y++){
        r->ents[y]->y += r->y;
        r->ents[y]->x += r->x;
-       inscribeEntity(r->ents[y]);
+       inscribeEntity(r->ents[y], r);
      }
      break;
   }
@@ -199,6 +210,23 @@ Room * newRoom(int y, int x, int type){
   }
   return r;
 }
+Room* getRoomAt(int y, int x){
+  int i; Room* r;
+  for(i=0; i<currMap->roomCount; i++){
+    r = currMap->rooms[i];
+    if(
+      y >= r->y && y <= r->y + r->h-1
+      &&
+      x >= r->x && x <= r->x + r->w-1
+    ){
+      mvprintw(20, 8, "                       ");
+      mvprintw(20, 8, "y: %d x: %d h: %d w: %d",r->y,r->x,r->h,r->w);
+      return r;
+    }
+  }
+  endwin();
+  printf("Not within a room. %d\n", currMap->roomCount);
+}
 Map * newMap(int height, int width, Tile fill){
   Map * m = malloc(sizeof(Map));
   m->fill = fill;
@@ -212,7 +240,7 @@ Map * newMap(int height, int width, Tile fill){
       m->data[y][x] = fill;
     }
   }
-  m->structs = malloc(sizeof(Room **) * MAX_STRUCTS_IN_A_SINGLE_MAP);
+  m->roomCount = 0;
   return m;
 }
 void drawMap(){
@@ -230,25 +258,18 @@ void drawMap(){
   else if(cameraX + view->w > currMap->w){
     offsetX = currMap->w - cameraX - view->w;}
 
+  int color; Tile t;
   for(y=0; y<view->h; y++){
     for(x=0; x<view->w; x++){
-      if(
-      currMap->data[cameraY+offsetY+y][cameraX+offsetX+x].visible == 1
-      ){
-        attron(COLOR_PAIR(
-          currMap->data[cameraY+offsetY+y][cameraX+offsetX+x].color)
-        );
-        mvprintw(
-          y,
-          x,
-          currMap->data[cameraY+offsetY+y][cameraX+offsetX+x].gfx
-        );
-        attroff(COLOR_PAIR(
-          currMap->data[cameraY+offsetY+y][cameraX+offsetX+x].color)
-        );
+      t = currMap->data[cameraY+offsetY+y][cameraX+offsetX+x];
+      if(t.known == 1){
+        if(t.foggy == 1){color = WHITE;}
+        else{color = t.color;}
+        attron(COLOR_PAIR(color));
+        mvprintw(y,x,t.gfx);
+        attroff(COLOR_PAIR(color));
       }
-      else
-        mvprintw(y,x," ");
+      else mvprintw(y,x," ");
     }
   }
 }
@@ -281,4 +302,26 @@ int collEmpty(int y, int x){
     return 1;
   }
   else return 0;
+}
+void revealRoom(Room* r){
+  int y,x,h,w;
+  h = r->h + r->y; w = r->w + r->x;
+  for(y=r->y; y<h; y++){
+    for(x=r->x; x<w; x++){
+
+      if(!currMap->data[y][x].known) {
+        currMap->data[y][x].known=1;
+        currMap->data[y][x].foggy=0;}
+      else if(currMap->data[y][x].foggy) {
+        currMap->data[y][x].foggy=0;
+      }
+    }
+  }
+}
+void unrevealRoom(Room* r){
+  int y,x,h,w;
+  h = r->h + r->y; w = r->w + r->x;
+  for(y=r->y; y<h; y++){
+    for(x=r->x; x<w; x++){
+        currMap->data[y][x].foggy = 1;}}
 }

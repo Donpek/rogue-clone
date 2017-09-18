@@ -7,12 +7,13 @@ void main(){
   currMap = newMap(100,100,tiles[GRASS_ID]);
   view = newCamera(20,60,user);
 
-  generateDungeon(49,49,400);
-  inscribeEntity(user);
+  currMap->rooms = generateDungeon(49,49,600);
+  inscribeEntity(user, currMap->rooms[0]);
+  mvprintw(20,0,"test %d",currMap->roomCount);
 
   int input;
   do{
-    handleInput(input, user);
+    handleInput(input);
     drawMap();
   }while((input = getch()) != '/');
 
@@ -29,4 +30,8 @@ void init(){
 }
 int range(int from, int to){
   return rand() % (to-from+1) + from;
+}
+int within(int x, int from, int to){
+  if(from >= x && x <= to) return 1;
+  else return 0;
 }
