@@ -2,9 +2,9 @@
 
 int dungeonRoomProb(){
   int roll = range(1,100);
-  if(roll <= 10){
+  if(roll <= 20){
     return SLIME_ROOM;
-  }else if(roll <= 70){
+  }else if(roll <= 60){
     return SMALL_RECTANGLE;
   }else
     return LARGE_RECTANGLE;
@@ -24,11 +24,11 @@ Room** generateDungeon(int y, int x, int maxSize){
   size++;
 
   for(i=1; i<maxSize; i++){
-    if(stop == 12 && start == rooms[currIndex]){
+    if(stop == 24 && start == rooms[currIndex]){
       mvprintw(21, 0, "Too many rooms, dude.");
       return rooms;
     }
-    if(stop == 12) {
+    if(stop == 24) {
       stop = 0;
       currIndex--;
     }
@@ -215,17 +215,21 @@ Room* getRoomAt(int y, int x){
   for(i=0; i<currMap->roomCount; i++){
     r = currMap->rooms[i];
     if(
-      y >= r->y && y <= r->y + r->h-1
+      y > r->y && y < r->y + r->h-1
       &&
-      x >= r->x && x <= r->x + r->w-1
+      x > r->x && x < r->x + r->w-1
     ){
-      mvprintw(20, 8, "                       ");
-      mvprintw(20, 8, "y: %d x: %d h: %d w: %d",r->y,r->x,r->h,r->w);
+      mvprintw(20, 9, "                       ");
+      mvprintw(20, 9, "y: %d x: %d h: %d w: %d",r->y,r->x,r->h,r->w);
       return r;
     }
   }
+  return NULL;
   endwin();
-  printf("Not within a room. %d\n", currMap->roomCount);
+  printf("Not within a room.");
+}
+Tile getTileAt(int y, int x){
+  return currMap->data[y][x];
 }
 Map * newMap(int height, int width, Tile fill){
   Map * m = malloc(sizeof(Map));
@@ -308,13 +312,8 @@ void revealRoom(Room* r){
   h = r->h + r->y; w = r->w + r->x;
   for(y=r->y; y<h; y++){
     for(x=r->x; x<w; x++){
-
-      if(!currMap->data[y][x].known) {
-        currMap->data[y][x].known=1;
-        currMap->data[y][x].foggy=0;}
-      else if(currMap->data[y][x].foggy) {
-        currMap->data[y][x].foggy=0;
-      }
+      currMap->data[y][x].known=1;
+      currMap->data[y][x].foggy=0;
     }
   }
 }

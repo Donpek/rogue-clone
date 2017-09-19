@@ -67,6 +67,7 @@ int collEnt(Entity** ents, int ent_count, int y, int x);
 void revealRoom(Room* r);
 void unrevealRoom(Room* r);
 Room* getRoomAt(int y, int x);
+Tile getTileAt(int y, int x);
 /*entities.c*/
 Camera * newCamera(int height, int width, Entity * target);
 void handleInput(int in);

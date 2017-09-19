@@ -9,8 +9,7 @@ void main(){
 
   currMap->rooms = generateDungeon(49,49,600);
   inscribeEntity(user, currMap->rooms[0]);
-  mvprintw(20,0,"test %d",currMap->roomCount);
-
+  
   int input;
   do{
     handleInput(input);

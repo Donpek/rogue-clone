@@ -1,13 +1,13 @@
 +Movement
 +Collision
 +Camera
-+Room gen (rectangles)
++Room gen (rectangle+)
 +Dungeon gen (snake algorithm)
 +Tiles (category, graphic, color)
 +Monsters
++Lighting
 
 -UI (1 y below current Camera)(NAME(camW-6 max length)\n)
--Lighting
 -Abilities
 -Event log
 -Combat

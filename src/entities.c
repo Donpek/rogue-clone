@@ -1,8 +1,6 @@
 #include "rogue.h"
 
 void inscribeEntity(Entity * e, Room* r){
-  e->t.known = 1;
-  e->below.known = 1;
   e->below = currMap->data[e->y][e->x];
   currMap->data[e->y][e->x] = e->t;
   e->currRoom = r;
@@ -15,30 +13,42 @@ Camera * newCamera(int height, int width, Entity * target){
   return c;
 }
 void handleInput(int in){
-  Room* prevRoom = user->currRoom;
+  int dy=0,dx=0; Room* prevRoom;
   currMap->data[user->y][user->x] = user->below;
   switch(in){
     case 'W':
     case 'w':
-      if(collEmpty(user->y - 1, user->x) == 1) user->y--; break;
+      if(collEmpty(user->y - 1, user->x) == 1) dy--; break;
     case 'A':
     case 'a':
-      if(collEmpty(user->y, user->x - 1) == 1) user->x--; break;
+      if(collEmpty(user->y, user->x - 1) == 1) dx--; break;
     case 'S':
     case 's':
-      if(collEmpty(user->y + 1, user->x) == 1) user->y++; break;
+      if(collEmpty(user->y + 1, user->x) == 1) dy++; break;
     case 'D':
     case 'd':
-      if(collEmpty(user->y, user->x + 1) == 1) user->x++; break;
+      if(collEmpty(user->y, user->x + 1) == 1) dx++; break;
   }//switch
+  user->y += dy; user->x += dx;
   user->below = currMap->data[user->y][user->x];
   currMap->data[user->y][user->x] = user->t;
 
+  prevRoom = user->currRoom == NULL ?
+    getRoomAt(user->y-2*dy,user->x-2*dx) : user->currRoom;
   user->currRoom = getRoomAt(user->y, user->x);
-  if(currMap->data[user->currRoom->y+1][user->currRoom->x+1].foggy == 1){
-    unrevealRoom(prevRoom);
-    revealRoom(user->currRoom);
-  }
+  mvprintw(20 ,0,"below: %s",user->below.gfx);
+  if(user->currRoom != NULL){
+      unrevealRoom(prevRoom);
+      revealRoom(user->currRoom);
+      user->below.known = 1;
+      user->below.foggy = 0;
+      user->t.known = 1;
+      user->t.foggy = 0;}
+  else if(dx != 0 || dy != 0
+  /*    this IF prevents a segfault when walking
+        into walls whilst being in a door   */){
+    revealRoom(getRoomAt(user->y + dy, user->x + dx));
+  }//ifelse
 }
 void eraseEntity(Entity* e){
   currMap->data[e->y][e->x] = e->below;
@@ -67,7 +77,6 @@ Entity * newEntity(int y, int x, int type){
       e->maxhp = e->hp;
       e->stamina = range(1, 5);
       e->maxStamina = e->stamina;
-      e->visionRange = range(2, 6);
       e->weight = e->hp;
       e->maxweight = e->weight * 2;
       e->abilities = malloc(sizeof(Ability) * 3);
