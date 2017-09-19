@@ -53,12 +53,14 @@ Tile* initTiles();
 void initColors();
 int range(int from, int to);
 int within(int x, int from, int to);
+void drawUI();
 /*maps.c*/
 Map * newMap(int h, int w, Tile fill);
 void drawMap();
 void inscribeRoom(Room * r);
 void inscribeRect(Room * r, int cornerID, int wallID, int floorID);
-int collRoom(int y, int x);
+int collRoom(Room* r, int y, int x);
+int collRect(int y, int x, int h, int w, int flag);
 int collEmpty(int y, int x);
 Room * newRoom(int y, int x, int type);
 Room ** generateDungeon(int y, int x, int maxSize);

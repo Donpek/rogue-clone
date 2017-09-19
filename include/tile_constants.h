@@ -32,7 +32,7 @@
 #define WALL_COLOR YELLOW
 #define WALL_CATEGORY CATEGORY_ROOM
 //
-#define FLOOR_GFX "."
+#define FLOOR_GFX "_"
 #define FLOOR_COLOR YELLOW
 #define FLOOR_CATEGORY CATEGORY_ROOM
 /**/

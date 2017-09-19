@@ -6,9 +6,9 @@
 +Tiles (category, graphic, color)
 +Monsters
 +Lighting
++UI (1 y below current Camera)(NAME(camW-6 max length)\n)
++Abilities
 
--UI (1 y below current Camera)(NAME(camW-6 max length)\n)
--Abilities
 -Event log
 -Combat
 

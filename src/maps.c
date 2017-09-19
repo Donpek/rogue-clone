@@ -14,18 +14,17 @@ Room** generateDungeon(int y, int x, int maxSize){
   Room ** rooms = malloc(sizeof(Room *) * maxSize);
   Room * r;
   int i, pY, pX, pH, pW, minWall, dir;
-  int stop=0, currIndex=0, size=0;
+  int stop=0, currIndex=0, size=1;
   Room * start;
 
-  rooms[size] = newRoom(y, x, dungeonRoomProb());
-  start = rooms[size];
+  rooms[0] = newRoom(y, x, dungeonRoomProb());
+  start = rooms[0];
   currMap->roomCount++;
-  inscribeRoom(rooms[size]);
-  size++;
+  inscribeRoom(rooms[0]);
 
   for(i=1; i<maxSize; i++){
-    if(stop == 24 && start == rooms[currIndex]){
-      mvprintw(21, 0, "Too many rooms, dude.");
+    if(stop == 24 && rooms[currIndex] == start){
+      mvprintw(view->h+2, 0, "Too many rooms, dude.");
       return rooms;
     }
     if(stop == 24) {
@@ -38,21 +37,16 @@ Room** generateDungeon(int y, int x, int maxSize){
     dir = rand() % 4;
     switch(dir){
       case 0: //EAST
-        if(
-          collRoom(pY, pX+pW) == 0 &&
-          collRoom(pY+r->h-1, pX+pW) == 0 &&
-          collRoom(pY, pX+pW+r->w-1) == 0 &&
-          collRoom(pY+r->h-1, pX+pW+r->w-1) == 0 &&
-          collRoom(pY+r->h/2-1, pX+pW+r->w/2-1) == 0
-        ){
+        if(!collRect(pY, pX+pW, r->h, r->w, CATEGORY_ROOM)){
           stop=0;
           r->y = pY; r->x = pX + pW - 1;
-          minWall = (r->h < rooms[currIndex]->h) ?
-            r->h : rooms[currIndex]->h;
+          minWall = (r->h < pH) ?
+            r->h : pH;
           currIndex++; rooms[size] = r;
           currMap->roomCount++; size++;
           inscribeRoom(r);
-          currMap->data[r->y+rand()%(minWall-2)+1][r->x] = tiles[VERTICAL_DOOR_ID];}
+          currMap->data[r->y+rand()%(minWall-2)+1][r->x] =
+            tiles[VERTICAL_DOOR_ID];}
         else{
           i--;
           free(r);
@@ -60,21 +54,16 @@ Room** generateDungeon(int y, int x, int maxSize){
         }
         break;
       case 1: //NORTH
-        if(
-          collRoom(pY-r->h, pX) == 0 &&
-          collRoom(pY-r->h, pX+r->w-1) == 0 &&
-          collRoom(pY-1, pX) == 0 &&
-          collRoom(pY-1, pX+r->w-1) == 0 &&
-          collRoom(pY-r->h/2, pX+r->w/2-1) == 0
-        ){
+        if(!collRect(pY-r->h,pX,r->h,r->w,CATEGORY_ROOM)){
           stop=0;
           r->y = pY-r->h+1; r->x = pX;
-          minWall = (r->w < rooms[currIndex]->w) ?
-            r->w : rooms[currIndex]->w;
+          minWall = (r->w < pW) ?
+            r->w : pW;
           currIndex++; rooms[size] = r;
           currMap->roomCount++; size++;
           inscribeRoom(r);
-          currMap->data[r->y+r->h-1][r->x+rand()%(minWall-2)+1] = tiles[HORIZONTAL_DOOR_ID];}
+          currMap->data[r->y+r->h-1][r->x+rand()%(minWall-2)+1] =
+            tiles[HORIZONTAL_DOOR_ID];}
         else{
           i--;
           free(r);
@@ -82,13 +71,7 @@ Room** generateDungeon(int y, int x, int maxSize){
         }
         break;
       case 2: //WEST
-        if(
-          collRoom(pY, pX-r->w) == 0 &&
-          collRoom(pY, pX-1) == 0 &&
-          collRoom(pY+r->h-1, pX-r->w) == 0 &&
-          collRoom(pY+r->h-1, pX-1) == 0 &&
-          collRoom(pY+r->h/2-1, pX-r->w/2) == 0
-        ){
+        if(!collRect(pY,pX-r->w,r->h,r->w,CATEGORY_ROOM)){
           stop=0;
           r->y = pY; r->x = pX-r->w+1;
           minWall = (r->h < rooms[currIndex]->h) ?
@@ -96,7 +79,8 @@ Room** generateDungeon(int y, int x, int maxSize){
           currIndex++; rooms[size] = r;
           currMap->roomCount++; size++;
           inscribeRoom(r);
-          currMap->data[r->y+rand()%(minWall-2)+1][r->x+r->w-1] = tiles[VERTICAL_DOOR_ID];}
+          currMap->data[r->y+rand()%(minWall-2)+1][r->x+r->w-1] =
+            tiles[VERTICAL_DOOR_ID];}
         else{
           i--;
           free(r);
@@ -104,21 +88,16 @@ Room** generateDungeon(int y, int x, int maxSize){
         }
         break;
       case 3: //SOUTH
-        if(
-          collRoom(pY+pH, pX) == 0 &&
-          collRoom(pY+pH+r->h-1, pX) == 0 &&
-          collRoom(pY+pH, pX+r->w-1) == 0 &&
-          collRoom(pY+pH+r->h-1, pX+r->w-1) == 0 &&
-          collRoom(pY+r->h/2-1, pX+r->w/2-1) == 0
-        ){
+        if(!collRect(pY+pH,pX,r->h,r->w,CATEGORY_ROOM)){
           stop=0;
           r->y = pY+pH-1; r->x = pX;
-          minWall = (r->w < rooms[currIndex]->w) ?
-            r->w : rooms[currIndex]->w;
+          minWall = (r->w < pW) ?
+            r->w : pW;
           currIndex++; rooms[size] = r;
           currMap->roomCount++; size++;
           inscribeRoom(r);
-          currMap->data[r->y][r->x+rand()%(minWall-2)+1] = tiles[HORIZONTAL_DOOR_ID];}
+          currMap->data[r->y][r->x+rand()%(minWall-2)+1] =
+            tiles[HORIZONTAL_DOOR_ID];}
         else{
           i--;
           free(r);
@@ -219,8 +198,8 @@ Room* getRoomAt(int y, int x){
       &&
       x > r->x && x < r->x + r->w-1
     ){
-      mvprintw(20, 9, "                       ");
-      mvprintw(20, 9, "y: %d x: %d h: %d w: %d",r->y,r->x,r->h,r->w);
+      mvprintw(view->h+3, 9, "                       ");
+      mvprintw(view->h+3, 9, "y: %d x: %d h: %d w: %d",r->y,r->x,r->h,r->w);
       return r;
     }
   }
@@ -263,8 +242,8 @@ void drawMap(){
     offsetX = currMap->w - cameraX - view->w;}
 
   int color; Tile t;
-  for(y=0; y<view->h; y++){
-    for(x=0; x<view->w; x++){
+  for(y=1; y<view->h+1; y++){
+    for(x=1; x<view->w+1; x++){
       t = currMap->data[cameraY+offsetY+y][cameraX+offsetX+x];
       if(t.known == 1){
         if(t.foggy == 1){color = WHITE;}
@@ -277,20 +256,43 @@ void drawMap(){
     }
   }
 }
-int collRoom(int y, int x){
+int collRect(int y, int x, int h, int w, int flag){
+  int j,k; Tile t;
+  int jl=y+h, kl=x+w;
+  for(j=y; j<jl; j++){
+    for(k=x; k<kl; k++){
+      if(k < 0 || j < 0 || k >= currMap->w || j >= currMap->h){
+        return -1; /*OUT OF BOUNDS*/}
+      else{
+        t = currMap->data[j][k];
+        if(t.category == flag){
+          return 1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+int collRoom(Room* r, int y, int x){
   if(x < 0 || y < 0 || x >= currMap->w || y >= currMap->h){
     return -1; // OUT OF BOUNDS
   }
-  char * t = currMap->data[y][x].gfx;
-  if(strcmp(t, FLOOR_GFX) == 0 ||
-     strcmp(t, VERTICAL_DOOR_GFX) == 0 ||
-     strcmp(t, HORIZONTAL_DOOR_GFX) == 0 ||
-     strcmp(t, CORNER_GFX) == 0 ||
-     strcmp(t, WALL_GFX) == 0
-  ){
-    return 1;
+  int j,k; char* t;
+  for(j=y; j<y+r->h; j++){
+    for(k=x; k<x+r->w; k++){
+      t = currMap->data[j][k].gfx;
+      if(
+        strcmp(t, FLOOR_GFX) == 0 ||
+        strcmp(t, VERTICAL_DOOR_GFX) == 0 ||
+        strcmp(t, HORIZONTAL_DOOR_GFX) == 0 ||
+        strcmp(t, CORNER_GFX) == 0 ||
+        strcmp(t, WALL_GFX) == 0
+      ){
+        return 1;
+      }
+    }
   }
-  else return 0;
+  return 0;
 }
 int collEmpty(int y, int x){
   if(x < 0 || y < 0 || x >= currMap->w || y >= currMap->h){

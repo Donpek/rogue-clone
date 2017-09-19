@@ -36,7 +36,7 @@ void handleInput(int in){
   prevRoom = user->currRoom == NULL ?
     getRoomAt(user->y-2*dy,user->x-2*dx) : user->currRoom;
   user->currRoom = getRoomAt(user->y, user->x);
-  mvprintw(20 ,0,"below: %s",user->below.gfx);
+  mvprintw(view->h+3 ,0,"below: %s",user->below.gfx);
   if(user->currRoom != NULL){
       unrevealRoom(prevRoom);
       revealRoom(user->currRoom);
