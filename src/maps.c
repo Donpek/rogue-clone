@@ -23,10 +23,7 @@ Room** generateDungeon(int y, int x, int maxSize){
   inscribeRoom(rooms[0]);
 
   for(i=1; i<maxSize; i++){
-    if(stop == 24 && rooms[currIndex] == start){
-      mvprintw(view->h+2, 0, "Too many rooms, dude.");
-      return rooms;
-    }
+    if(stop == 24 && rooms[currIndex] == start){return rooms;}
     if(stop == 24) {
       stop = 0;
       currIndex--;
@@ -164,15 +161,15 @@ Room * newRoom(int y, int x, int type){
   r->type = type;
   switch(type){
     case SMALL_RECTANGLE:
-      r->h = range(6, 9);
+      r->h = range(4, 7);
       r->w = range(6, 9);
       break;
     case LARGE_RECTANGLE:
-      r->h = range(10,18);
+      r->h = range(5,9);
       r->w = range(10,18);
       break;
     case SLIME_ROOM:
-      r->h = range(6, 12);
+      r->h = range(4, 7);
       r->w = range(6, 12);
       int y,x;
       r->entCount = range(r->h*.5,r->h*1.5);
@@ -197,15 +194,9 @@ Room* getRoomAt(int y, int x){
       y > r->y && y < r->y + r->h-1
       &&
       x > r->x && x < r->x + r->w-1
-    ){
-      mvprintw(view->h+3, 9, "                       ");
-      mvprintw(view->h+3, 9, "y: %d x: %d h: %d w: %d",r->y,r->x,r->h,r->w);
-      return r;
-    }
+    ){return r;}
   }
   return NULL;
-  endwin();
-  printf("Not within a room.");
 }
 Tile getTileAt(int y, int x){
   return currMap->data[y][x];

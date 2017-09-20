@@ -7,6 +7,7 @@ void initColors(){
   init_pair(BLUE, COLOR_BLUE, COLOR_BLACK);
   init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);
   init_pair(MAGENTA, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(SOLID_WHITE, COLOR_WHITE, COLOR_WHITE);
 }
 
 Tile* initTiles(){

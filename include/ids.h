@@ -15,6 +15,7 @@
 #define BLUE 3
 #define YELLOW 4
 #define MAGENTA 5
+#define SOLID_WHITE 6
 /* ROOM TYPE IDS */
 #define SMALL_RECTANGLE 0
 #define LARGE_RECTANGLE 1

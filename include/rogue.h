@@ -10,6 +10,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef void (*Ability)(struct Entity* user, struct Entity* target);
 
@@ -23,10 +24,11 @@ typedef struct{
   Tile t, below;
   int hp, maxhp,
     stamina, maxStamina,
-    weight, maxweight,
+    weight, maxWeight,
     visionRange;
   Ability ** abilities;
   struct Room* currRoom;
+  char* name;
 } Entity;
 
 typedef struct Room{
@@ -48,9 +50,11 @@ typedef struct{
   Entity * target;
 } Camera;
 
+/*inits.c*/
 void init();
 Tile* initTiles();
 void initColors();
+/*main.c*/
 int range(int from, int to);
 int within(int x, int from, int to);
 void drawUI();
@@ -85,5 +89,7 @@ Tile* tiles;
 Entity* user;
 Map* currMap;
 Camera* view;
+char* userName;
+char* eventLog;
 
 #endif
