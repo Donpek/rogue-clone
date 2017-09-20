@@ -13,44 +13,40 @@ Camera * newCamera(int height, int width, Entity * target){
   return c;
 }
 void handleInput(int in){
-  int dy=0,dx=0,y,x; Room* prevRoom;
-  currMap->data[user->y][user->x] = user->below;
+  int dy=0,dx=0; Room* prevRoom;
   switch(in){
-    case 'W': case 'w':
-      y = user->y - 1; x = user->x; dy = -1; break;
-    case 'A': case 'a':
-      y = user->y; x = user->x - 1; dx = -1; break;
-    case 'S': case 's':
-      y = user->y + 1; x = user->x; dy = 1; break;
-    case 'D': case 'd':
-      y = user->y; x = user->x + 1; dx = 1; break;
+    case 'W': case 'w': dy = -1; break;
+    case 'A': case 'a': dx = -1; break;
+    case 'S': case 's': dy = 1; break;
+    case 'D': case 'd': dx = 1; break;
   }//switch
 
-  if(collEmpty(y,x) == 1){
-    user->y += dy; user->x += dx;
-  }else if(collRect(y,x,1,1,CATEGORY_MONSTER) == 1){
-    //TO-DO combat
+  currMap->data[player->y][player->x] = player->below;
+
+  if(collEmpty(player->y+dy,player->x+dx) == 1){
+    player->y += dy; player->x += dx;
+
+    prevRoom = player->currRoom == NULL ?
+      getRoomAt(player->y-2*dy,player->x-2*dx) : player->currRoom;
+    player->currRoom = getRoomAt(player->y, player->x);
+    if(player->currRoom != NULL){
+        unrevealRoom(prevRoom);
+        revealRoom(player->currRoom);
+        player->below.known = 1;
+        player->below.foggy = 0;
+        player->t.known = 1;
+        player->t.foggy = 0;}
+    else if(dx != 0 || dy != 0
+    /*    this IF prevents a segfault when walking
+          into walls whilst being in a door  */ ){
+      revealRoom(getRoomAt(player->y + dy, player->x + dx));
+    }//ifelse
+  }else if(collRect(player->y+dy,player->x+dx,1,1,CATEGORY_MONSTER) == 1){
+    setLog("* hit");
   }
 
-
-  user->below = currMap->data[user->y][user->x];
-  currMap->data[user->y][user->x] = user->t;
-
-  prevRoom = user->currRoom == NULL ?
-    getRoomAt(user->y-2*dy,user->x-2*dx) : user->currRoom;
-  user->currRoom = getRoomAt(user->y, user->x);
-  if(user->currRoom != NULL){
-      unrevealRoom(prevRoom);
-      revealRoom(user->currRoom);
-      user->below.known = 1;
-      user->below.foggy = 0;
-      user->t.known = 1;
-      user->t.foggy = 0;}
-  else if(dx != 0 || dy != 0
-  /*    this IF prevents a segfault when walking
-        into walls whilst being in a door   */){
-    revealRoom(getRoomAt(user->y + dy, user->x + dx));
-  }//ifelse
+  player->below = currMap->data[player->y][player->x];
+  currMap->data[player->y][player->x] = player->t;
 }
 void eraseEntity(Entity* e){
   currMap->data[e->y][e->x] = e->below;
@@ -60,16 +56,12 @@ void eraseEntity(Entity* e){
 }
 Entity * newEntity(int y, int x, int type){
   Entity * e = malloc(sizeof(Entity));
-  int i; char* name;
   e->y = y;
   e->x = x;
   e->t = tiles[type];
   switch(type){
     case PLAYER_ID:
-      name = userName;
-      for(i=0; i<name[i] != 0; i++){
-        name[i] = toupper(name[i]);}
-      e->name = name;
+      e->name = userName;
       e->hp = range(60, 140);
       e->maxhp = e->hp;
       e->stamina = range(12, 28);
@@ -78,7 +70,6 @@ Entity * newEntity(int y, int x, int type){
       e->weight = range(e->hp * .7, e->hp * 1.3);
       e->maxWeight = e->weight * 1.5;
       e->abilities = malloc(sizeof(Ability) * 4);
-      e->abilities[0] = punch;
       break;
     case SLIME_ID:
       e->name = "SLIME";
@@ -89,7 +80,6 @@ Entity * newEntity(int y, int x, int type){
       e->weight = e->hp;
       e->maxWeight = e->weight * 2;
       e->abilities = malloc(sizeof(Ability));
-      e->abilities[0] = bodySlam;
       break;
     default:
       endwin();

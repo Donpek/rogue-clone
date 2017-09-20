@@ -3,14 +3,14 @@
 void main(){
   init();
   tiles = initTiles();
-  user = newEntity(100,100,PLAYER_ID);
+  player = newEntity(100,100,PLAYER_ID);
   currMap = newMap(200,200,tiles[GRASS_ID]);
-  view = newCamera(20,60,user);
+  view = newCamera(16,60,player);
   userName = "Anpuk";
-  eventLog = "* You find yourself in an underground dungeon.";
+  eventLog = malloc(sizeof(char)*view->w);
 
   currMap->rooms = generateDungeon(99,99,600);
-  inscribeEntity(user, currMap->rooms[0]);
+  inscribeEntity(player, currMap->rooms[0]);
 
   int input;
   do{
@@ -37,6 +37,19 @@ int range(int from, int to){
 int within(int x, int from, int to){
   if(from >= x && x <= to) return 1;
   else return 0;
+}
+void setLog(char* message){
+  int i,j;
+  for(i=0;i<view->w;i++){
+    if(message[i] != '\0'){
+      eventLog[i] = message[i];
+    }else{
+      for(j=i; j<view->w; j++){
+        eventLog[j] = ' ';
+      }
+      return;
+    }
+  }
 }
 void drawUI(){
   int i;
@@ -87,13 +100,13 @@ void drawUI(){
 
   mvprintw(ly+5,lx+1,"====Health====");
   mvprintw(ly+6,lx+1," %d (%d)",
-    user->hp, user->maxhp);
+    player->hp, player->maxhp);
   mvprintw(ly+7,lx+1,"===Stamina====");
   mvprintw(ly+8,lx+1," %d (%d)",
-    user->stamina, user->maxStamina);
+    player->stamina, player->maxStamina);
   mvprintw(ly+9,lx+1,"====Weight====");
   mvprintw(ly+10,lx+1," %d (%d)",
-    user->weight, user->maxWeight);
+    player->weight, player->maxWeight);
   mvprintw(ly+11,lx+1,"==============");
 
   mvprintw(ly+13,lx+1,"====Floor=====");

@@ -58,6 +58,7 @@ void initColors();
 int range(int from, int to);
 int within(int x, int from, int to);
 void drawUI();
+void setLog(char* message);
 /*maps.c*/
 Map * newMap(int h, int w, Tile fill);
 void drawMap();
@@ -86,7 +87,7 @@ void bodySlam(Entity* puncher, Entity* target);
 //
 
 Tile* tiles;
-Entity* user;
+Entity* player;
 Map* currMap;
 Camera* view;
 char* userName;

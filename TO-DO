@@ -17,7 +17,10 @@
 -Pets
 -Inventory
 -Consumables
--Spells(teleportation, fire)
+-Spells(teleportation, fire, power up)
 -Sleeping(tiredness, day/night cycle)
 -Weather
 -Message windows
+-Critical strikes(punch crit: sleep for 10 turns, body slam crit: stun for 2 turns)
+-Dodge chance, defence
+o
