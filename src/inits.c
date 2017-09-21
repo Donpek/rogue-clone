@@ -17,6 +17,7 @@ Tile* initTiles(){
   for(i=0; i<NUM_OF_TILES; i++){
     tiles[i].known = 0;
     tiles[i].foggy = 1;
+    tiles[i].parent = NULL;
   }
 
   tiles[PLAYER_ID].gfx = PLAYER_GFX;

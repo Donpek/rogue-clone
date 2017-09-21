@@ -2,23 +2,25 @@
 
 void main(){
   init();
-  tiles = initTiles();
-  player = newEntity(100,100,PLAYER_ID);
-  currMap = newMap(200,200,tiles[GRASS_ID]);
-  view = newCamera(16,60,player);
-  userName = "Anpuk";
-  eventLog = malloc(sizeof(char)*view->w);
 
-  currMap->rooms = generateDungeon(99,99,600);
-  inscribeEntity(player, currMap->rooms[0]);
-
-  int input;
+  int input, i, j; Entity* e;
   do{
     handleInput(input);
     drawMap();
     drawUI();
-    mvprintw(view->h+2,1,eventLog);
-  }while((input = getch()) != '/');
+    mvprintw(view->h+2,1,eventLog[0]);
+    mvprintw(view->h+3,1,eventLog[1]);
+    mvprintw(view->h+4,1,eventLog[2]);
+    for(i=0; i<currMap->roomCount; i++){
+      for(j=0; j<currMap->rooms[i]->entCount; j++){
+        e = currMap->rooms[i]->ents[j];
+        if(e->maxStamina > e->stamina){
+          e->stamina++;}
+      }
+    }
+    if(player->maxStamina > player->stamina){
+      player->stamina++;}
+  }while((input = getch()) != '/' && !gameOver);
 
   endwin();
 }
@@ -30,6 +32,20 @@ void init(){
   noecho();
   curs_set(0);
   srand((unsigned)time(NULL));
+
+  gameOver = 0;
+  tiles = initTiles();
+  player = newEntity(100,100,PLAYER_ID);
+  currMap = newMap(200,200,tiles[GRASS_ID]);
+  view = newCamera(14,60,player);
+  userName = "Anpuk";
+  eventLog = malloc(sizeof(char*)*3);
+  eventLog[0] = malloc(sizeof(char)*view->w);
+  eventLog[1] = malloc(sizeof(char)*view->w);
+  eventLog[2] = malloc(sizeof(char)*view->w);
+
+  currMap->rooms = generateDungeon(99,99,600);
+  inscribeEntity(player, currMap->rooms[0]);
 }
 int range(int from, int to){
   return rand() % (to-from+1) + from;
@@ -38,18 +54,34 @@ int within(int x, int from, int to){
   if(from >= x && x <= to) return 1;
   else return 0;
 }
-void setLog(char* message){
+void delay(int milliseconds)
+{
+    long pause;
+    clock_t now,then;
+
+    pause = milliseconds*(CLOCKS_PER_SEC/1000);
+    now = then = clock();
+    while( (now-then) < pause )
+        now = clock();
+}
+void setLog(char* text, int lineIndex){
   int i,j;
+
   for(i=0;i<view->w;i++){
-    if(message[i] != '\0'){
-      eventLog[i] = message[i];
+    if(text[i] != '\0'){
+      eventLog[lineIndex][i] = text[i];
     }else{
       for(j=i; j<view->w; j++){
-        eventLog[j] = ' ';
+        eventLog[lineIndex][j] = ' ';
       }
       return;
     }
   }
+}
+void log(char* message){
+  setLog(eventLog[1],0);
+  setLog(eventLog[2],1);
+  setLog(message,2);
 }
 void drawUI(){
   int i;
@@ -71,12 +103,16 @@ void drawUI(){
   /**/
 
   /*log*/
-  mvprintw(h+2,0,"\\");
-  mvprintw(h+2,w,"/");
+  mvprintw(h+4,0,"\\");
+  mvprintw(h+4,w,"/");
   mvprintw(h+1,0,"|");
+  mvprintw(h+2,0,"|");
+  mvprintw(h+3,0,"|");
   mvprintw(h+1,w,"|");
+  mvprintw(h+2,w,"|");
+  mvprintw(h+3,w,"|");
   for(i=1; i<w; i++){
-    mvprintw(h+2,i,"-");
+    mvprintw(h+4,i,"-");
   }
   /**/
 

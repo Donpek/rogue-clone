@@ -23,6 +23,7 @@ void handleInput(int in){
 
   currMap->data[player->y][player->x] = player->below;
 
+  Tile* hit; Entity* hitE;
   if(collEmpty(player->y+dy,player->x+dx) == 1){
     player->y += dy; player->x += dx;
 
@@ -41,18 +42,35 @@ void handleInput(int in){
           into walls whilst being in a door  */ ){
       revealRoom(getRoomAt(player->y + dy, player->x + dx));
     }//ifelse
-  }else if(collRect(player->y+dy,player->x+dx,1,1,CATEGORY_MONSTER) == 1){
-    setLog("* hit");
+  }else if((hit =
+    collRect(player->y+dy,player->x+dx,1,1,CATEGORY_MONSTER)) != NULL)
+  {
+    hitE = (Entity*)(hit->parent);
+
+    combat(player, hitE);
+    mvprintw(view->h+6,1,"              ");
+    mvprintw(view->h+6,1,"HP: %d SP: %d",hitE->hp,hitE->stamina);
   }
 
   player->below = currMap->data[player->y][player->x];
   currMap->data[player->y][player->x] = player->t;
 }
+void combat(Entity* e1, Entity* e2){
+  e1->abilities[0](e1, e2);
+  if(e2->hp > 0){
+    e2->abilities[0](e2, e1);
+  }
+}
 void eraseEntity(Entity* e){
   currMap->data[e->y][e->x] = e->below;
   //TO-DO drop items
-  eventLog = "* %s has died.", e->name;
-  free(e);
+  //eventLog = "* %s has died.", e->name;
+  if(e->t.category == CATEGORY_PLAYER){
+    gameOver=1;
+    endwin();
+    printf("\nGAME OVER.\n");}
+  else{
+    free(e);}
 }
 Entity * newEntity(int y, int x, int type){
   Entity * e = malloc(sizeof(Entity));
@@ -64,12 +82,13 @@ Entity * newEntity(int y, int x, int type){
       e->name = userName;
       e->hp = range(60, 140);
       e->maxhp = e->hp;
-      e->stamina = range(12, 28);
+      e->stamina = range(25, 50);
       e->maxStamina = e->stamina;
       e->visionRange = range(6, 14);
       e->weight = range(e->hp * .7, e->hp * 1.3);
       e->maxWeight = e->weight * 1.5;
-      e->abilities = malloc(sizeof(Ability) * 4);
+      e->abilities = malloc(sizeof(Ability*) * 4);
+      e->abilities[0] = &punch;
       break;
     case SLIME_ID:
       e->name = "SLIME";
@@ -79,11 +98,13 @@ Entity * newEntity(int y, int x, int type){
       e->maxStamina = e->stamina;
       e->weight = e->hp;
       e->maxWeight = e->weight * 2;
-      e->abilities = malloc(sizeof(Ability));
+      e->abilities = malloc(sizeof(Ability*));
+      e->abilities[0] = &bodySlam;
       break;
     default:
       endwin();
       printf("newEntity type non-existant.");
   }
+  e->t.parent = (void*)e;
   return e;
 }

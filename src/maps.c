@@ -2,9 +2,9 @@
 
 int dungeonRoomProb(){
   int roll = range(1,100);
-  if(roll <= 20){
+  if(roll <= 50){
     return SLIME_ROOM;
-  }else if(roll <= 60){
+  }else if(roll <= 75){
     return SMALL_RECTANGLE;
   }else
     return LARGE_RECTANGLE;
@@ -34,7 +34,7 @@ Room** generateDungeon(int y, int x, int maxSize){
     dir = rand() % 4;
     switch(dir){
       case 0: //EAST
-        if(!collRect(pY, pX+pW, r->h, r->w, CATEGORY_ROOM)){
+        if(collRect(pY, pX+pW, r->h, r->w, CATEGORY_ROOM) == NULL){
           stop=0;
           r->y = pY; r->x = pX + pW - 1;
           minWall = (r->h < pH) ?
@@ -51,7 +51,7 @@ Room** generateDungeon(int y, int x, int maxSize){
         }
         break;
       case 1: //NORTH
-        if(!collRect(pY-r->h,pX,r->h,r->w,CATEGORY_ROOM)){
+        if(collRect(pY-r->h,pX,r->h,r->w,CATEGORY_ROOM) == NULL){
           stop=0;
           r->y = pY-r->h+1; r->x = pX;
           minWall = (r->w < pW) ?
@@ -68,7 +68,7 @@ Room** generateDungeon(int y, int x, int maxSize){
         }
         break;
       case 2: //WEST
-        if(!collRect(pY,pX-r->w,r->h,r->w,CATEGORY_ROOM)){
+        if(collRect(pY,pX-r->w,r->h,r->w,CATEGORY_ROOM) == NULL){
           stop=0;
           r->y = pY; r->x = pX-r->w+1;
           minWall = (r->h < rooms[currIndex]->h) ?
@@ -85,7 +85,7 @@ Room** generateDungeon(int y, int x, int maxSize){
         }
         break;
       case 3: //SOUTH
-        if(!collRect(pY+pH,pX,r->h,r->w,CATEGORY_ROOM)){
+        if(collRect(pY+pH,pX,r->h,r->w,CATEGORY_ROOM) == NULL){
           stop=0;
           r->y = pY+pH-1; r->x = pX;
           minWall = (r->w < pW) ?
@@ -247,22 +247,21 @@ void drawMap(){
     }
   }
 }
-int collRect(int y, int x, int h, int w, int flag){
+Tile* collRect(int y, int x, int h, int w, int flag){
   int j,k; Tile t;
   int jl=y+h, kl=x+w;
   for(j=y; j<jl; j++){
     for(k=x; k<kl; k++){
       if(k < 0 || j < 0 || k >= currMap->w || j >= currMap->h){
-        return -1; /*OUT OF BOUNDS*/}
+        return; /*OUT OF BOUNDS*/}
       else{
-        t = currMap->data[j][k];
-        if(t.category == flag){
-          return 1;
+        if(currMap->data[j][k].category == flag){
+          return currMap->data[j]+k;
         }
       }
     }
   }
-  return 0;
+  return NULL;
 }
 int collRoom(Room* r, int y, int x){
   if(x < 0 || y < 0 || x >= currMap->w || y >= currMap->h){

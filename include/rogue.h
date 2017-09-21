@@ -17,6 +17,7 @@ typedef void (*Ability)(struct Entity* user, struct Entity* target);
 typedef struct{
   char * gfx;
   int color, known, foggy, category;
+  void* parent;
 } Tile;
 
 typedef struct{
@@ -26,7 +27,7 @@ typedef struct{
     stamina, maxStamina,
     weight, maxWeight,
     visionRange;
-  Ability ** abilities;
+  Ability* abilities;
   struct Room* currRoom;
   char* name;
 } Entity;
@@ -55,17 +56,19 @@ void init();
 Tile* initTiles();
 void initColors();
 /*main.c*/
+void delay(int milliseconds);
 int range(int from, int to);
 int within(int x, int from, int to);
 void drawUI();
-void setLog(char* message);
+void setLog(char* text, int lineIndex);
+void log(char* message);
 /*maps.c*/
 Map * newMap(int h, int w, Tile fill);
 void drawMap();
 void inscribeRoom(Room * r);
 void inscribeRect(Room * r, int cornerID, int wallID, int floorID);
 int collRoom(Room* r, int y, int x);
-int collRect(int y, int x, int h, int w, int flag);
+Tile* collRect(int y, int x, int h, int w, int flag);
 int collEmpty(int y, int x);
 Room * newRoom(int y, int x, int type);
 Room ** generateDungeon(int y, int x, int maxSize);
@@ -76,6 +79,7 @@ void unrevealRoom(Room* r);
 Room* getRoomAt(int y, int x);
 Tile getTileAt(int y, int x);
 /*entities.c*/
+void combat(Entity* e1, Entity* e2);
 Camera * newCamera(int height, int width, Entity * target);
 void handleInput(int in);
 void inscribeEntity(Entity * e, Room* r);
@@ -91,6 +95,7 @@ Entity* player;
 Map* currMap;
 Camera* view;
 char* userName;
-char* eventLog;
+char** eventLog;
+int gameOver;
 
 #endif

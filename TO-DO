@@ -10,17 +10,17 @@
 +Abilities
 +Event log
 
--Combat
++-Combat //TO-DO implement event log messages during combat
+-AI (random, following, aggressive(combat(mob, player) ) )
+-Inventory
 
 -Village gen
 -Projectiles
 -Pets
--Inventory
 -Consumables
 -Spells(teleportation, fire, power up)
 -Sleeping(tiredness, day/night cycle)
 -Weather
 -Message windows
 -Critical strikes(punch crit: sleep for 10 turns, body slam crit: stun for 2 turns)
--Dodge chance, defence
-o
+-Dodge chance, defense
