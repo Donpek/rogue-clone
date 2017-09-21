@@ -61,14 +61,25 @@ void combat(Entity* e1, Entity* e2){
     e2->abilities[0](e2, e1);
   }
 }
+void updateStats(){
+  int i,j; Entity* e;
+  for(i=0; i<currMap->roomCount; i++){
+    for(j=0; j<currMap->rooms[i]->entCount; j++){
+      e = currMap->rooms[i]->ents[j];
+      if(e->maxStamina > e->stamina){
+        e->stamina++;}
+    }
+  }
+  if(player->maxStamina > player->stamina){
+    player->stamina++;}
+}
 void eraseEntity(Entity* e){
   currMap->data[e->y][e->x] = e->below;
   //TO-DO drop items
   //eventLog = "* %s has died.", e->name;
   if(e->t.category == CATEGORY_PLAYER){
     gameOver=1;
-    endwin();
-    printf("\nGAME OVER.\n");}
+    log("You have died.");}
   else{
     free(e);}
 }

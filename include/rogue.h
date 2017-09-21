@@ -56,6 +56,7 @@ void init();
 Tile* initTiles();
 void initColors();
 /*main.c*/
+void updateStats();
 void delay(int milliseconds);
 int range(int from, int to);
 int within(int x, int from, int to);

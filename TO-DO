@@ -12,6 +12,9 @@
 
 +-Combat //TO-DO implement event log messages during combat
 -AI (random, following, aggressive(combat(mob, player) ) )
+  //TO-DO fix bug when monster spawns on top of the player
+
+-Message windows
 -Inventory
 
 -Village gen
@@ -21,6 +24,5 @@
 -Spells(teleportation, fire, power up)
 -Sleeping(tiredness, day/night cycle)
 -Weather
--Message windows
 -Critical strikes(punch crit: sleep for 10 turns, body slam crit: stun for 2 turns)
 -Dodge chance, defense

@@ -1,5 +1,29 @@
 #include "rogue.h"
 
+void init(){
+  initscr();
+  start_color();
+  initColors();
+  raw();
+  noecho();
+  curs_set(0);
+  srand((unsigned)time(NULL));
+
+  gameOver = 0;
+  tiles = initTiles();
+  player = newEntity(100,100,PLAYER_ID);
+  currMap = newMap(200,200,tiles[GRASS_ID]);
+  view = newCamera(14,60,player);
+  userName = "Anpuk";
+  eventLog = malloc(sizeof(char*)*3);
+  eventLog[0] = malloc(sizeof(char)*view->w);
+  eventLog[1] = malloc(sizeof(char)*view->w);
+  eventLog[2] = malloc(sizeof(char)*view->w);
+
+  currMap->rooms = generateDungeon(99,99,600);
+  inscribeEntity(player, currMap->rooms[0]);
+}
+
 void initColors(){
   init_pair(WHITE, COLOR_WHITE, COLOR_BLACK);
   init_pair(RED, COLOR_RED, COLOR_BLACK);
