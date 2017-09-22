@@ -65,19 +65,16 @@ void drawUI(){
     mvprintw(0,lx+i,"-");
     mvprintw(lh,lx+i,"-");
   }
-  mvprintw(ly+1,lx+1,"=====Name=====");
-  mvprintw(ly+2,lx+2,userName);
+  mvprintw(ly+1,lx+1,"==============");
+  mvprintw(ly+2,lx+1," rogue-clone");
   mvprintw(ly+3,lx+1,"==============");
 
   mvprintw(ly+5,lx+1,"====Health====");
-  mvprintw(ly+6,lx+1," %d (%d)",
-    player->hp, player->maxhp);
+
   mvprintw(ly+7,lx+1,"===Stamina====");
-  mvprintw(ly+8,lx+1," %d (%d)",
-    player->stamina, player->maxStamina);
+
   mvprintw(ly+9,lx+1,"====Weight====");
-  mvprintw(ly+10,lx+1," %d (%d)",
-    player->weight, player->maxWeight);
+
   mvprintw(ly+11,lx+1,"==============");
 
   mvprintw(ly+13,lx+1,"====Floor=====");
@@ -91,5 +88,14 @@ void drawUI(){
   mvprintw(view->h+2,1,eventLog[0]);
   mvprintw(view->h+3,1,eventLog[1]);
   mvprintw(view->h+4,1,eventLog[2]);
+  /**/
+
+  /*stats content*/
+  mvprintw(ly+6,lx+1," %d (%d)",
+    player->hp, player->maxhp);
+  mvprintw(ly+8,lx+1," %d (%d)",
+    player->stamina, player->maxStamina);
+  mvprintw(ly+10,lx+1," %d (%d)",
+    player->weight, player->maxWeight);
   /**/
 }

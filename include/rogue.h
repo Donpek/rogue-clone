@@ -30,6 +30,7 @@ typedef struct{
   Ability* abilities;
   struct Room* currRoom;
   char* name;
+  int dead;
 } Entity;
 
 typedef struct Room{
@@ -95,7 +96,6 @@ Tile* tiles;
 Entity* player;
 Map* currMap;
 Camera* view;
-char* userName;
 char** eventLog;
 int gameOver;
 

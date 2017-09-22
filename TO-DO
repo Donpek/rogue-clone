@@ -9,8 +9,8 @@
 +UI (1 y below current Camera)(NAME(camW-6 max length)\n)
 +Abilities
 +Event log
++Combat
 
-+-Combat //TO-DO implement event log messages during combat
 -AI (random, following, aggressive(combat(mob, player) ) )
   //TO-DO fix bug when monster spawns on top of the player
 

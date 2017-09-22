@@ -2,6 +2,7 @@
 
 int main(){
   init();
+  log("* You find yourself inside of a dungeon.");
 
   int input;
   do{

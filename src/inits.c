@@ -14,7 +14,6 @@ void init(){
   player = newEntity(100,100,PLAYER_ID);
   currMap = newMap(200,200,tiles[GRASS_ID]);
   view = newCamera(14,60,player);
-  userName = "Anpuk";
   eventLog = malloc(sizeof(char*)*3);
   eventLog[0] = malloc(sizeof(char)*view->w);
   eventLog[1] = malloc(sizeof(char)*view->w);

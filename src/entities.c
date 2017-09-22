@@ -46,10 +46,10 @@ void handleInput(int in){
     collRect(player->y+dy,player->x+dx,1,1,CATEGORY_MONSTER)) != NULL)
   {
     hitE = (Entity*)(hit->parent);
-
-    combat(player, hitE);
     mvprintw(view->h+6,1,"              ");
     mvprintw(view->h+6,1,"HP: %d SP: %d",hitE->hp,hitE->stamina);
+    combat(player, hitE);
+
   }
 
   player->below = currMap->data[player->y][player->x];
@@ -57,7 +57,7 @@ void handleInput(int in){
 }
 void combat(Entity* e1, Entity* e2){
   e1->abilities[0](e1, e2);
-  if(e2->hp > 0){
+  if(!e2->dead){
     e2->abilities[0](e2, e1);
   }
 }
@@ -76,21 +76,22 @@ void updateStats(){
 void eraseEntity(Entity* e){
   currMap->data[e->y][e->x] = e->below;
   //TO-DO drop items
-  //eventLog = "* %s has died.", e->name;
   if(e->t.category == CATEGORY_PLAYER){
     gameOver=1;
-    log("You have died.");}
+    log("* You have died.");}
   else{
-    free(e);}
+    e->dead = 1;
+  }
 }
 Entity * newEntity(int y, int x, int type){
   Entity * e = malloc(sizeof(Entity));
   e->y = y;
   e->x = x;
   e->t = tiles[type];
+  e->dead = 0;
   switch(type){
     case PLAYER_ID:
-      e->name = userName;
+      e->name = "PLAYER";
       e->hp = range(60, 140);
       e->maxhp = e->hp;
       e->stamina = range(25, 50);
