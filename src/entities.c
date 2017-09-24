@@ -12,6 +12,11 @@ Camera * newCamera(int height, int width, Entity * target){
   c->target = target;
   return c;
 }
+void moveEntity(Entity* e, int dy, int dx){
+  currMap->data[e->y][e->x] = e->below;
+  e->below = currMap->data[e->y][e->x];
+  currMap->data[e->y][e->x] = e->t;
+}
 void handleInput(int in){
   int dy=0,dx=0; Room* prevRoom;
   switch(in){
@@ -25,8 +30,7 @@ void handleInput(int in){
 
   Tile* hit; Entity* hitE;
   if(collEmpty(player->y+dy,player->x+dx) == 1){
-    player->y += dy; player->x += dx;
-
+    player->y+=dy; player->x+=dx;
     prevRoom = player->currRoom == NULL ?
       getRoomAt(player->y-2*dy,player->x-2*dx) : player->currRoom;
     player->currRoom = getRoomAt(player->y, player->x);

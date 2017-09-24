@@ -33,7 +33,7 @@ Room** generateDungeon(int y, int x, int maxSize){
     pH = rooms[currIndex]->h; pW = rooms[currIndex]->w;
     dir = rand() % 4;
     switch(dir){
-      case 0: //EAST
+      case EAST:
         if(collRect(pY, pX+pW, r->h, r->w, CATEGORY_ROOM) == NULL){
           stop=0;
           r->y = pY; r->x = pX + pW - 1;
@@ -50,7 +50,7 @@ Room** generateDungeon(int y, int x, int maxSize){
           stop++;
         }
         break;
-      case 1: //NORTH
+      case NORTH:
         if(collRect(pY-r->h,pX,r->h,r->w,CATEGORY_ROOM) == NULL){
           stop=0;
           r->y = pY-r->h+1; r->x = pX;
@@ -67,7 +67,7 @@ Room** generateDungeon(int y, int x, int maxSize){
           stop++;
         }
         break;
-      case 2: //WEST
+      case WEST:
         if(collRect(pY,pX-r->w,r->h,r->w,CATEGORY_ROOM) == NULL){
           stop=0;
           r->y = pY; r->x = pX-r->w+1;
@@ -84,7 +84,7 @@ Room** generateDungeon(int y, int x, int maxSize){
           stop++;
         }
         break;
-      case 3: //SOUTH
+      case SOUTH:
         if(collRect(pY+pH,pX,r->h,r->w,CATEGORY_ROOM) == NULL){
           stop=0;
           r->y = pY+pH-1; r->x = pX;

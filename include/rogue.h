@@ -87,9 +87,12 @@ void handleInput(int in);
 void inscribeEntity(Entity * e, Room* r);
 Entity * newEntity(int y, int x, int type);
 void eraseEntity(Entity* e);
+void moveEntity(Entity* e, int dy, int dx);
 /*abilities.c*/
-void punch(Entity* puncher, Entity* target);
-void bodySlam(Entity* puncher, Entity* target);
+void punch(Entity* user, Entity* target);
+void bodySlam(Entity* user, Entity* target);
+/*behaviors.c*/
+void randomAI(Entity* user, Entity* target);
 //
 
 Tile* tiles;

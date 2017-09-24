@@ -20,3 +20,8 @@
 #define SMALL_RECTANGLE 0
 #define LARGE_RECTANGLE 1
 #define SLIME_ROOM 2
+/* DIRECTIONS */
+#define NORTH 0
+#define WEST 1
+#define SOUTH 2
+#define EAST 3
