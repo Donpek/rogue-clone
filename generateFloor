@@ -1,10 +1,11 @@
 Room* generateFloor(int y, int x, int id, int maxSize){
   int currY=y, currX=x, currOffset=0, failures=0;
   Room* rooms = (Room*)calloc(maxSize,sizeof(Room));
+  Room tryRoom;
   switch(id){
     case SLIME_FLOOR:
       while(currOffset != 0 && failures != GENERATION_TRY_LIMIT){
-        
+        tryRoom = newRoom(currY,currX,roomTypeProb(id));
       }
       break;
     /* TO-DO 
