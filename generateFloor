@@ -1,16 +1,36 @@
-Room* generateFloor(int y, int x, int id, int maxSize){
-  int currY=y, currX=x, currOffset=0, failures=0;
+Room* generateFloor(int startY, int startX, int id, int maxSize){
+  int currOffset=1, failures=0, dir, y, x;
   Room* rooms = (Room*)calloc(maxSize,sizeof(Room));
   Room tryRoom;
-  switch(id){
-    case SLIME_FLOOR:
-      while(currOffset != 0 && failures != GENERATION_TRY_LIMIT){
-        tryRoom = newRoom(currY,currX,roomTypeProb(id));
-      }
-      break;
-    /* TO-DO 
-      add more floor types
-    */
-    default: error("No such floor type");
+  Room* currRoom;
+
+  setRoom(*rooms,startY,startX,roomTypeProb(id));
+  while(currOffset != 0 && failures != GENERATION_TRY_LIMIT){
+    dir = rand() % 4;
+    currRoom = rooms + currOffset;
+    setRoom(tryRoom,0,0,roomTypeProb(id));
+    switch(dir){
+      case NORTH:
+        y = currRoom->y - tryRoom.h; 
+        x = currRoom->x;
+        break;
+      case SOUTH:
+        y = currRoom->y + currRoom->h; 
+        x = currRoom->x;
+        break;
+      case EAST:
+        y = currRoom->y; 
+        x = currRoom->x + currRoom->w;
+        break;
+      case WEST:
+        y = currRoom->y; 
+        x = currRoom->x - tryRoom.w;
+        break;
+    }
+    if(collRect(y,x,tryRoom.h,tryRoom.w,IS_ROOM) == 1){
+      failures++;
+    }
+
   }
+
 }
